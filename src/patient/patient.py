@@ -40,19 +40,10 @@ class Patient:
         self.vaccination_protection_factor_generators = vaccination_protection_factor_generators
 
         # Track protection factors: [mask, social_distance, handwashing]
-        self.protection_factors = 1+np.random.uniform(mask_protection_factor_generators) * 1+np.random.uniform(social_distance_protection_factor_generators) * 1+np.random.uniform(handwash_distance_protection_factor_generators)
-
-        # # Track mask protection factor
-        # _lower, _upper = mask_protection_factor_generators
-        # self.mask_protection_factor = 1+np.random.uniform(_lower, _upper)
-
-        # # Track social protection factor
-        # _lower, _upper = social_distance_protection_factor_generators
-        # self.social_distance_protection_factor = 1+np.random.uniform(_lower, _upper)
-
-        # # Track mask protection factor
-        # _lower, _upper = handwash_distance_protection_factor_generators
-        # self.handwash_protection_factor = 1+np.random.uniform(_lower, _upper)
+        _ml, _mu = mask_protection_factor_generators
+        _sl, _su = social_distance_protection_factor_generators
+        _hl, _hu = handwash_distance_protection_factor_generators
+        self.protection_factors = 1+np.random.uniform(_ml, _mu) * 1+np.random.uniform(_sl, _su) * 1+np.random.uniform(_hl, _hu)
 
         # Generate a duration for incubation - defaults give a 2..5 day period
         _lower, _upper, c = self.incubation_period_generators
