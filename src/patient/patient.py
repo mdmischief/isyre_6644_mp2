@@ -9,6 +9,9 @@ class Patient:
         id: int,
         name: str = None,
         infectious_probability: float = 0.02,
+        # mask_protection_factor_generators=[0.0, 0.01],
+        # social_distance_protection_factor_generators=[0.0, 0.01],
+        # handwash_distance_protection_factor_generators=[0.0, 0.01],
         mask_protection_factor_generators=[0.25, 0.75],
         social_distance_protection_factor_generators=[0.25, 0.35],
         handwash_distance_protection_factor_generators=[0.25, 0.35],
@@ -65,14 +68,21 @@ class Patient:
         # self.infected_on + self.incubation_period
         self.infectious_on = None
 
+        self.infectious_start = -1
+        self.infectious_end = 2**31
+
         # Track vaccination timehack
         self.vaccinated_on = np.zeros(0)
 
-    def __str__(self):
-        return f'Patient ID {self.id} named {self.name} has infectious probability {self.infectious_probability}'
+    # def __str__(self):
+    #     return f'Patient ID {self.id} named {self.name} has infectious probability {self.infectious_probability}'
 
     def __repr__(self):
         return f'Patient(id={self.id}, name={self.name}, infectious_probability={self.infectious_probability}, mask_protection_factor_generators={self.mask_protection_factor_generators}, social_distance_protection_factor_generators={self.social_distance_protection_factor_generators}, handwash_distance_protection_factor_generators={self.handwash_distance_protection_factor_generators}, incubation_period_generators={self.incubation_period_generators}, infectious_period_generators={self.infectious_period_generators}, vaccination_protection_factor_generators={self.vaccination_protection_factor_generators})'
+
+    # def infection_status(self):
+    def __str__(self):
+        return f'Patient ID {self.id} named {self.name} infected by {self.infected_by} on {self.infected_on} and will be infectious from {self.infectious_start} until {self.infectious_end}.'
 
     def vaccinate(
         self,
@@ -103,8 +113,19 @@ class Patient:
         """
         # If Peer is self do nothing
         # If Peer is not infectious do nothing
-        if self.id == peer.id or self.infectious_start <= simulation_timehack <= self.infectious_end:
-            pass
+        # print(f'Self check {self.id == peer.id} Infected_By {peer.infected_by is None} clock {not (self.infectious_start <= simulation_timehack <= self.infectious_end)}')
+
+        if self.id == peer.id:
+            return
+
+        if peer.infected_by is None:
+            return
+
+        if not (peer.infectious_start <= simulation_timehack <= peer.infectious_end):
+            return
+
+        if self.infected_on is not None and self.infected_by < simulation_timehack:
+            return
 
         # Generate the probability of infection based on the Peer/Subject attributes
         rand = np.random.uniform(0, 1) * self.protection_factors * self.vaccination_protection_factor
@@ -115,4 +136,8 @@ class Patient:
             self.infectious_start = self.infected_on + self.incubation_period
             self.infectious_end = self.infectious_start + self.infectious_period
 
-        pass
+    def patient_zero(self):
+        self.infected_by = self.id
+        self.infected_on = 0
+        self.infectious_start = self.infected_on + self.incubation_period
+        self.infectious_end = self.infectious_start + self.infectious_period

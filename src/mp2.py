@@ -42,7 +42,7 @@ parser.add_argument(
     help="Account for no school on Weekends",
     type=str2bool,
     dest='weekend_check',
-    default=True
+    default=False
 )
 parser.add_argument(
     "-eps",
@@ -88,6 +88,28 @@ eps = args['episodes']
 n_days = args['n_days']
 p = args['p']
 
+
+# for pt in population:
+#     print(repr(pt))
+
+
+def sim_day(population, day=0):
+    if weekend_check and day != 0 and (day+1) % 6 == 0:
+        # do nothing
+        # print(f'Day = {day}: 6 do nothing')
+        pass
+    elif weekend_check and day != 0 and (day+1) % 7 == 0:
+        # do nothing
+        # print(f'Day = {day}: 7 do nothing')
+        pass
+    else:
+        # print(f'Day = {day}: do the thing')
+        for pt in population:
+            for peer in population:
+                pt.encounter(peer=peer, simulation_timehack=day)
+
+
+# def main():
 population = []
 
 for i in range(0, n_students):
@@ -99,5 +121,11 @@ for i in range(0, n_students):
         )
     )
 
-for pt in population:
-    print(repr(pt))
+population[0].patient_zero()
+
+for i in range(0, 20):
+    print(f'Timehack: {i}')
+    sim_day(population, i)
+
+    for pt in population:
+        print(pt)
