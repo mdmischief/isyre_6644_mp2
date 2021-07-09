@@ -117,7 +117,7 @@ for i in range(0, n_students):
         Patient(
             id=i,
             name=i,
-            infectious_probability=.8
+            infectious_probability=p
         )
     )
 
