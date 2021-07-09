@@ -117,11 +117,11 @@ for i in range(0, n_students):
         Patient(
             id=i,
             name=i,
-            infectious_probability=p
+            infectious_probability=.8
         )
     )
 
-population[0].patient_zero()
+population[0].patient_zero(0)
 
 for i in range(0, 20):
     print(f'Timehack: {i}')

@@ -112,19 +112,19 @@ class Patient:
             simulation_timehack (int): Timehack for tracking when encounter occurred.
         """
         # If Peer is self do nothing
-        # If Peer is not infectious do nothing
-        # print(f'Self check {self.id == peer.id} Infected_By {peer.infected_by is None} clock {not (self.infectious_start <= simulation_timehack <= self.infectious_end)}')
-
         if self.id == peer.id:
             return
 
+        # If Peer is not infected do nothing
         if peer.infected_by is None:
             return
 
+        # If Peer is not in infectious period do nothing
         if not (peer.infectious_start <= simulation_timehack <= peer.infectious_end):
             return
 
-        if self.infected_on is not None and self.infected_by < simulation_timehack:
+        # If Self has already been infected, no reinfections
+        if self.infected_by is not None:
             return
 
         # Generate the probability of infection based on the Peer/Subject attributes
@@ -136,8 +136,13 @@ class Patient:
             self.infectious_start = self.infected_on + self.incubation_period
             self.infectious_end = self.infectious_start + self.infectious_period
 
-    def patient_zero(self):
+    def patient_zero(self, infectious_start=None):
         self.infected_by = self.id
         self.infected_on = 0
-        self.infectious_start = self.infected_on + self.incubation_period
+
+        if infectious_start is None:
+            self.infectious_start = self.infected_on + self.incubation_period
+        else:
+            self.infectious_start = infectious_start
+
         self.infectious_end = self.infectious_start + self.infectious_period
