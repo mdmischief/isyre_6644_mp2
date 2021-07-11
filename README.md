@@ -30,22 +30,32 @@ Optionally, you may use the included Poetry Environment Files:
     ```Python
     usage: mp1.py [-h] [-ns N_STUDENTS] [-w WEEKEND_CHECK] [-eps EPISODES] [-nd N_DAYS] [-p P] [-ndi N_DAYS_INFECTIOUS]
 
-    ISYE 6644 MiniProject1 - Flu.
+    ISYE 6644 MiniProject - Flu.
 
     optional arguments:
-    -h, --help            show this help message and exit
-    -ns N_STUDENTS, --n_students N_STUDENTS
-                            Number of Students
-    -w WEEKEND_CHECK, --weekend_check WEEKEND_CHECK
-                            Account for no school on Weekends
-    -eps EPISODES, --episodes EPISODES
-                            Number of episodes to simulate
-    -nd N_DAYS, --n_days N_DAYS
-                            Number of days to simulate
-    -p P, --probability_infect P
-                            Probabilty of Infection
-    -ndi N_DAYS_INFECTIOUS, --n_days_infectious N_DAYS_INFECTIOUS
-                            Number of days infectious
+        -h, --help            show this help message and exit
+        -ns N_STUDENTS, --n_students N_STUDENTS
+                              Number of Students
+        -w--weekend_check WEEKEND_CHECK
+                              Account for no school on Weekends
+        -eps EPISODES, --episodes EPISODES
+                              Number of episodes to simulate
+        -nd N_DAYS, --n_days N_DAYS
+                              Number of days to simulate
+        -p P, --probability_infect P
+                              Probabilty of Infection
+        -mpf MASK_PROTECTION_FACTOR_GENERATORS [MASK_PROTECTION_FACTOR_GENERATORS ...], --mask_pro_factor MASK_PROTECTION_FACTOR_GENERATORS [MASK_PROTECTION_FACTOR_GENERATORS ...]
+                              Two values between 0..1
+        -sdpf SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS [SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS ...], --soc_dist_pro_factor SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS [SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS ...]
+                              Two values between 0..1
+        -hdpf HANDWASH_DISTANCE_PROTECTION_FACTOR_GENERATORS [HANDWASH_DISTANCE_PROTECTION_FACTOR_GENERATORS ...], --hand_wash_pro_factor HANDWASH_DISTANCE_PROTECTION_FACTOR_GENERATORS [HANDWASH_DISTANCE_PROTECTION_FACTOR_GENERATORS ...]
+                              Two values between 0..1
+        -incp INCUBATION_PERIOD_GENERATORS [INCUBATION_PERIOD_GENERATORS ...], --incubation_period INCUBATION_PERIOD_GENERATORS [INCUBATION_PERIOD_GENERATORS ...]
+                              Two values between 0..1 and an int
+        -infp INFECTIOUS_PERIOD_GENERATORS [INFECTIOUS_PERIOD_GENERATORS ...], --infection_period INFECTIOUS_PERIOD_GENERATORS [INFECTIOUS_PERIOD_GENERATORS ...]
+                              Two values between 0..1 and an int
+        -vpf VACCINATION_PROTECTION_FACTOR_GENERATORS [VACCINATION_PROTECTION_FACTOR_GENERATORS ...], --vax_pro_factor VACCINATION_PROTECTION_FACTOR_GENERATORS [VACCINATION_PROTECTION_FACTOR_GENERATORS ...]
+                              Two values between 0..1
     ```
 
     Example with default parameters:
@@ -69,4 +79,4 @@ Optionally, you may use the included Poetry Environment Files:
 
 * Tables Directory - csv files generated from the Python script that were used to create Table 1 and Table 2 in the report.
   * day2_dist.csv - The theoretical distribution of kids infected by day 2 (Table 1)
-  * p_range.csv - Percent of episodes that ended in all kids infected for simulations at differnet infection rates, p. Based on Monte Carlo simulations of 1000 episodes each. (Table 2)
+  * p_range.csv - Percent of episodes that ended in all kids infected for simulations at different infection rates, p. Based on Monte Carlo simulations of 1000 episodes each. (Table 2)
