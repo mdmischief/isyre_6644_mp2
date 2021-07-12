@@ -13,6 +13,9 @@ import ctypes
 fig_dir = pathlib.Path.cwd() / 'figs'
 fig_dir.mkdir(parents=True, exist_ok=True)
 
+data_dir = pathlib.Path.cwd() / 'data'
+data_dir.mkdir(parents=True, exist_ok=True)
+
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -54,7 +57,7 @@ parser.add_argument(
     help="Number of episodes to simulate",
     type=int,
     dest='episodes',
-    default=1000
+    default=10000
 )
 parser.add_argument(
     "-nd",
@@ -233,7 +236,6 @@ def episode(i, def_param=shared_array):
     # Make sure your not modifying data when someone else is.
     lock.acquire()
 
-    print(f'{i=}')
     day_results[i, :] = infections
     # print(f'{day_results[i]=}')
 
@@ -273,7 +275,8 @@ def main():
     expected_df = pd.DataFrame(list(range(1, n_days + 1)), columns=["Day"])
     expected_df['Mean'] = expected_values[:n_days]
 
-    print(expected_df)
+    # print(expected_df)
+    expected_df.to_csv(data_dir / f'Flu_Pandemic_{eps}_weekend_{weekend_check}.csv')
 
     title = f'Histogram of Days the Epidemic Lasted\n {eps:,} Episodes. Mean = {round(epidem_lens.mean(), 2)} days, Median = {median(epidem_lens)} days'
     plt.hist(epidem_lens)
@@ -281,7 +284,7 @@ def main():
     plt.xlabel('Days')
     plt.ylabel('Episodes')
     plt.savefig(fig_dir / f'Flu_Pandemic_Fig1_{eps}_weekend_{weekend_check}.png')
-    plt.show()
+    # plt.show()
 
     title = f'Histogram of Days the Epidemic Lasted\n {eps:,} Episodes. Mean = {round(epidem_lens.mean(), 2)} days, Median = {median(epidem_lens)} days'
     plt.hist(epidem_lens, bins=range(min(epidem_lens), max(epidem_lens) + 1, 1))
@@ -289,21 +292,20 @@ def main():
     plt.xlabel('Days')
     plt.ylabel('Episodes')
     plt.savefig(fig_dir / f'Flu_Pandemic_Fig1_smallbins_{eps}_weekend_{weekend_check}.png')
-    plt.show()
+    # plt.show()
 
     title = f'Line Chart of Mean Cumulative Infections\n {eps:,} Episodes. Mean = {round(expected_df["Mean"].mean(), 2)} infections, Median = {round(median(expected_df["Mean"]), 2)} infections'
-    plt.plot(expected_df['Mean'], c='green')
+
     # evaluate the histogram
-    values, base = np.histogram(expected_df['Mean'], bins=n_days)
-    # evaluate the cumulative
-    cumulative = np.cumsum(values)
-    # plot the cumulative function
-    plt.plot(base[:-1], cumulative, c='blue')
+    hist, bins = np.histogram(expected_df['Mean'], bins=expected_df.shape[0], c='green')
+    offset = bins[1:] - bins[:-1]
+    plt.plot(bins[:-1] + offset, np.cumsum(hist), c='blue')
+
     plt.title(title)
     plt.xlabel('Days')
     plt.ylabel('Mean Infections')
     plt.savefig(fig_dir / f'Flu_Pandemic_means_{eps}_weekend_{weekend_check}.png')
-    plt.show()
+    # plt.show()
 
 
 if __name__ == "__main__":
