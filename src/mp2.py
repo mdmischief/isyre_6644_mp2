@@ -5,8 +5,10 @@ import pandas as pd
 from statistics import median
 import argparse
 import pathlib
-# import multiprocessing as mp
+import multiprocessing as mp
 from patient.patient import Patient
+import sys
+import ctypes
 
 fig_dir = pathlib.Path.cwd() / 'figs'
 fig_dir.mkdir(parents=True, exist_ok=True)
@@ -72,16 +74,6 @@ parser.add_argument(
     dest='p',
     default=0.083   # Median Value of 95% CI from https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5934309/
 )
-# parser.add_argument(
-#     "-mpf",
-#     "--mask_pro_factor",
-#     required=False,
-#     help='Two values between 0..1',
-#     type=float,
-#     nargs='+',
-#     dest='mask_protection_factor_generators',
-#     default=[0.25, 0.75]
-# )
 parser.add_argument(
     "-sdpf",
     "--soc_dist_pro_factor",
@@ -92,16 +84,6 @@ parser.add_argument(
     dest='social_distance_protection_factor_generators',
     default=[0.0, 0.1]
 )
-# parser.add_argument(
-#     "-hdpf",
-#     "--hand_wash_pro_factor",
-#     required=False,
-#     help='Two values between 0..1',
-#     type=float,
-#     nargs='+',
-#     dest='handwash_distance_protection_factor_generators',
-#     default=[0.25, 0.35]
-# )
 parser.add_argument(
     "-incp",
     "--incubation_period",
@@ -140,12 +122,38 @@ weekend_check = args['weekend_check']
 eps = args['episodes']
 n_days = args['n_days']
 p = args['p']
-# mask_protection_factor_generators = args['mask_protection_factor_generators']
 social_distance_protection_factor_generators = args['social_distance_protection_factor_generators']
-# handwash_distance_protection_factor_generators = args['handwash_distance_protection_factor_generators']
 incubation_period_generators = args['incubation_period_generators']
 infectious_period_generators = args['infectious_period_generators']
 vaccination_protection_factor_generators = args['vaccination_protection_factor_generators']
+
+
+def shared_array(dtype, shape):
+    """
+    Form a shared memory numpy array.
+
+    https://stackoverflow.com/q/5549190/2506522
+    """
+
+    size = sys.getsizeof(dtype())
+    for dim in shape:
+        size *= dim
+
+    shared_array_base = mp.Array(ctypes.c_float, size)
+    shared_array = np.ndarray(shape, dtype=dtype, buffer=shared_array_base.get_obj())
+    shared_array = shared_array.reshape(*shape)
+    return shared_array
+
+
+day_results = None
+
+
+def init(day_results_base):
+    global lock
+    lock = mp.Lock()
+    global day_results
+    day_results = np.ctypeslib.as_array(day_results_base.get_obj())
+    day_results = day_results.reshape(eps, n_days)
 
 
 def sim_day(population, infections, day=0):
@@ -167,11 +175,11 @@ def sim_day(population, infections, day=0):
     return infections
 
 
-def episode():
+def episode(i, def_param=shared_array):
     population = []
     infections = np.zeros(n_days)
 
-    for i in range(0, n_students):
+    for j in range(0, n_students):
         # Calculate handwashing protection factor.
         # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4839906/
         # 42% of population 0-3, 58% of population 4-9
@@ -196,8 +204,8 @@ def episode():
 
         population.append(
             Patient(
-                id=i,
-                name=i,
+                id=j,
+                name=j,
                 infectious_probability=p,
                 mask_protection_factor=mask_protection_factor,
                 social_distance_protection_factor_generators=social_distance_protection_factor_generators,
@@ -208,11 +216,11 @@ def episode():
             )
         )
 
-        if i != 0 and np.random.uniform(0, 1) <= .68:
-            population[i].vaccinate(i)
+        if j != 0 and np.random.uniform(0, 1) <= .68:
+            population[j].vaccinate(j)
 
             if np.random.uniform() >= 0.50:
-                population[i].vaccinate(i)
+                population[j].vaccinate(j)
 
     population[0].patient_zero(0)
 
@@ -222,29 +230,30 @@ def episode():
         infections[simulation_timehack] = new_infections
 
     # print(f'{infections=}')
-    return infections
+    # Make sure your not modifying data when someone else is.
+    lock.acquire()
+
+    print(f'{i=}')
+    day_results[i, :] = infections
+    # print(f'{day_results[i]=}')
+
+    # Always release the lock!
+    lock.release()
 
 
 def main():
     np.random.seed(42)
     # Simulate many episodes
-    day_results = np.zeros((eps, n_days))  # Store number infected by each day for each episode
-    episodes = 0
 
-    while episodes < eps:  # Each loop sims 1 episode
-        print(f'{episodes=}')
-        day_results[episodes] = episode()
-        episodes += 1
+    day_results_base = mp.Array(ctypes.c_double, eps * n_days)
 
-    # results = []
-    # pool = mp.Pool(mp.cpu_count())
-    # results.append(pool.map(episode(), range(eps)))
+    pool = mp.Pool(processes=mp.cpu_count(), initializer=init, initargs=(day_results_base,))
+    pool.map(episode, range(eps))
     # pool.close()
 
-    # print(type(results))
-    # print(results)
-
-    # day_results = np.asarray(results)
+    day_results = np.ctypeslib.as_array(day_results_base.get_obj())
+    day_results = day_results.reshape(eps, n_days)
+    # print(day_results)
 
     # Calculate and print stats
 
