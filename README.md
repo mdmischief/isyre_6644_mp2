@@ -9,13 +9,18 @@ Requires Python ">=3.7.1,<3.10"
 
 Execution requires the following PYthon packages be installed:
 
-* numpy
+* argparse
+* ctypes
+* math
 * matplotlib
+* multiprocessing
 * pandas
+* pathlib
+* Patient
+* numpy
 * scipy
 * statistics
-* argparse
-* pathlib
+* sys
 
 Optionally, you may use the included Poetry Environment Files:
 
@@ -28,34 +33,31 @@ Optionally, you may use the included Poetry Environment Files:
 * mp1.py - Simulation script written in Python
 
     ```Python
-    usage: mp1.py [-h] [-ns N_STUDENTS] [-w WEEKEND_CHECK] [-eps EPISODES] [-nd N_DAYS] [-p P] [-ndi N_DAYS_INFECTIOUS]
+  usage: mp2.py [-h] [-ns N_STUDENTS] [-w--weekend_check WEEKEND_CHECK] [-eps EPISODES] [-nd N_DAYS] [-p P] [-sdpf SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS [SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS ...]] [-incp INCUBATION_PERIOD_GENERATORS [INCUBATION_PERIOD_GENERATORS ...]] [-infp INFECTIOUS_PERIOD_GENERATORS [INFECTIOUS_PERIOD_GENERATORS ...]]
+                [-vpf VACCINATION_PROTECTION_FACTOR_GENERATORS [VACCINATION_PROTECTION_FACTOR_GENERATORS ...]]
 
-    ISYE 6644 MiniProject - Flu.
+  ISYE 6644 MiniProject2 - Flu.
 
-    optional arguments:
-        -h, --help            show this help message and exit
-        -ns N_STUDENTS, --n_students N_STUDENTS
-                              Number of Students
-        -w--weekend_check WEEKEND_CHECK
-                              Account for no school on Weekends
-        -eps EPISODES, --episodes EPISODES
-                              Number of episodes to simulate
-        -nd N_DAYS, --n_days N_DAYS
-                              Number of days to simulate
-        -p P, --probability_infect P
-                              Probabilty of Infection
-        -mpf MASK_PROTECTION_FACTOR_GENERATORS [MASK_PROTECTION_FACTOR_GENERATORS ...], --mask_pro_factor MASK_PROTECTION_FACTOR_GENERATORS [MASK_PROTECTION_FACTOR_GENERATORS ...]
-                              Two values between 0..1
-        -sdpf SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS [SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS ...], --soc_dist_pro_factor SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS [SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS ...]
-                              Two values between 0..1
-        -hdpf HANDWASH_DISTANCE_PROTECTION_FACTOR_GENERATORS [HANDWASH_DISTANCE_PROTECTION_FACTOR_GENERATORS ...], --hand_wash_pro_factor HANDWASH_DISTANCE_PROTECTION_FACTOR_GENERATORS [HANDWASH_DISTANCE_PROTECTION_FACTOR_GENERATORS ...]
-                              Two values between 0..1
-        -incp INCUBATION_PERIOD_GENERATORS [INCUBATION_PERIOD_GENERATORS ...], --incubation_period INCUBATION_PERIOD_GENERATORS [INCUBATION_PERIOD_GENERATORS ...]
-                              Two values between 0..1 and an int
-        -infp INFECTIOUS_PERIOD_GENERATORS [INFECTIOUS_PERIOD_GENERATORS ...], --infection_period INFECTIOUS_PERIOD_GENERATORS [INFECTIOUS_PERIOD_GENERATORS ...]
-                              Two values between 0..1 and an int
-        -vpf VACCINATION_PROTECTION_FACTOR_GENERATORS [VACCINATION_PROTECTION_FACTOR_GENERATORS ...], --vax_pro_factor VACCINATION_PROTECTION_FACTOR_GENERATORS [VACCINATION_PROTECTION_FACTOR_GENERATORS ...]
-                              Two values between 0..1
+  optional arguments:
+    -h, --help            show this help message and exit
+    -ns N_STUDENTS, --n_students N_STUDENTS
+                          Number of Students
+    -w--weekend_check WEEKEND_CHECK
+                          Account for no school on Weekends
+    -eps EPISODES, --episodes EPISODES
+                          Number of episodes to simulate
+    -nd N_DAYS, --n_days N_DAYS
+                          Number of days to simulate
+    -p P, --probability_infect P
+                          Probability of Infection
+    -sdpf SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS [SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS ...], --soc_dist_pro_factor SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS [SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS ...]
+                          Two values between 0..1
+    -incp INCUBATION_PERIOD_GENERATORS [INCUBATION_PERIOD_GENERATORS ...], --incubation_period INCUBATION_PERIOD_GENERATORS [INCUBATION_PERIOD_GENERATORS ...]
+                          Two integers
+    -infp INFECTIOUS_PERIOD_GENERATORS [INFECTIOUS_PERIOD_GENERATORS ...], --infection_period INFECTIOUS_PERIOD_GENERATORS [INFECTIOUS_PERIOD_GENERATORS ...]
+                          Two integers
+    -vpf VACCINATION_PROTECTION_FACTOR_GENERATORS [VACCINATION_PROTECTION_FACTOR_GENERATORS ...], --vax_pro_factor VACCINATION_PROTECTION_FACTOR_GENERATORS [VACCINATION_PROTECTION_FACTOR_GENERATORS ...]
+                          Two values between 0..1
     ```
 
     Example with default parameters:
