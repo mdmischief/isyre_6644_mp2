@@ -2,10 +2,10 @@ import numpy as np
 from math import ceil
 import matplotlib.pyplot as plt
 import pandas as pd
-from scipy.stats import binom
 from statistics import median
 import argparse
 import pathlib
+# import multiprocessing as mp
 from patient.patient import Patient
 
 fig_dir = pathlib.Path.cwd() / 'figs'
@@ -52,7 +52,7 @@ parser.add_argument(
     help="Number of episodes to simulate",
     type=int,
     dest='episodes',
-    default=1
+    default=1000
 )
 parser.add_argument(
     "-nd",
@@ -150,11 +150,11 @@ vaccination_protection_factor_generators = args['vaccination_protection_factor_g
 
 def sim_day(population, infections, day=0):
 
-    if weekend_check and day != 0 and (day+1) % 6 == 0:
+    if weekend_check and day != 0 and (day + 1) % 6 == 0:
         # do nothing
         # print(f'Day = {day}: 6 do nothing')
         pass
-    elif weekend_check and day != 0 and (day+1) % 7 == 0:
+    elif weekend_check and day != 0 and (day + 1) % 7 == 0:
         # do nothing
         # print(f'Day = {day}: 7 do nothing')
         pass
@@ -179,13 +179,13 @@ def episode():
         # 4-9: OR == 0.029
         handwash_protection_factor = 0
 
-        _cat_low = ceil(np.random.uniform(0.0, .3)*10)
-        _cat_high = ceil(np.random.uniform(.4, .9)*10)
+        _cat_low = ceil(np.random.uniform(0.0, .3) * 10)
+        _cat_high = ceil(np.random.uniform(.4, .9) * 10)
 
         if np.random.uniform(0, 1) <= .42:
             handwash_protection_factor = _cat_low * 0.26
         else:
-            handwash_protection_factor = 0.78 + ((_cat_high-3) * .029)
+            handwash_protection_factor = 0.78 + ((_cat_high - 3) * .029)
 
         # Calculate mask wearing protection factor.
         # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7169241/
@@ -230,11 +230,21 @@ def main():
     # Simulate many episodes
     day_results = np.zeros((eps, n_days))  # Store number infected by each day for each episode
     episodes = 0
-    np.random.seed(2**23 - 1)
+
     while episodes < eps:  # Each loop sims 1 episode
         print(f'{episodes=}')
         day_results[episodes] = episode()
         episodes += 1
+
+    # results = []
+    # pool = mp.Pool(mp.cpu_count())
+    # results.append(pool.map(episode(), range(eps)))
+    # pool.close()
+
+    # print(type(results))
+    # print(results)
+
+    # day_results = np.asarray(results)
 
     # Calculate and print stats
 
@@ -251,10 +261,40 @@ def main():
     # Expected value of infected by each day
     expected_values = day_results.mean(axis=0)
     # n_days = 41
-    expected_df = pd.DataFrame(list(range(1, n_days+1)), columns=["Day"])
+    expected_df = pd.DataFrame(list(range(1, n_days + 1)), columns=["Day"])
     expected_df['Mean'] = expected_values[:n_days]
 
     print(expected_df)
+
+    title = f'Histogram of Days the Epidemic Lasted\n {eps:,} Episodes. Mean = {round(epidem_lens.mean(), 2)} days, Median = {median(epidem_lens)} days'
+    plt.hist(epidem_lens)
+    plt.title(title)
+    plt.xlabel('Days')
+    plt.ylabel('Episodes')
+    plt.savefig(fig_dir / f'Flu_Pandemic_Fig1_{eps}_weekend_{weekend_check}.png')
+    plt.show()
+
+    title = f'Histogram of Days the Epidemic Lasted\n {eps:,} Episodes. Mean = {round(epidem_lens.mean(), 2)} days, Median = {median(epidem_lens)} days'
+    plt.hist(epidem_lens, bins=range(min(epidem_lens), max(epidem_lens) + 1, 1))
+    plt.title(title)
+    plt.xlabel('Days')
+    plt.ylabel('Episodes')
+    plt.savefig(fig_dir / f'Flu_Pandemic_Fig1_smallbins_{eps}_weekend_{weekend_check}.png')
+    plt.show()
+
+    title = f'Line Chart of Mean Cumulative Infections\n {eps:,} Episodes. Mean = {round(expected_df["Mean"].mean(), 2)} infections, Median = {round(median(expected_df["Mean"]), 2)} infections'
+    plt.plot(expected_df['Mean'], c='green')
+    # evaluate the histogram
+    values, base = np.histogram(expected_df['Mean'], bins=n_days)
+    # evaluate the cumulative
+    cumulative = np.cumsum(values)
+    # plot the cumulative function
+    plt.plot(base[:-1], cumulative, c='blue')
+    plt.title(title)
+    plt.xlabel('Days')
+    plt.ylabel('Mean Infections')
+    plt.savefig(fig_dir / f'Flu_Pandemic_means_{eps}_weekend_{weekend_check}.png')
+    plt.show()
 
 
 if __name__ == "__main__":
