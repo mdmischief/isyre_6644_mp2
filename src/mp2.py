@@ -294,12 +294,15 @@ def main():
     plt.savefig(fig_dir / f'Flu_Pandemic_Fig1_smallbins_{eps}_weekend_{weekend_check}.png')
     # plt.show()
 
-    title = f'Line Chart of Mean Cumulative Infections\n {eps:,} Episodes. Mean = {round(expected_df["Mean"].mean(), 2)} infections, Median = {round(median(expected_df["Mean"]), 2)} infections'
+    title = f'Line Chart of Infections: {eps:,} Episodes.\nMean = {round(expected_df["Mean"].mean(), 2)} infections, Median = {round(median(expected_df["Mean"]), 2)} infections'
 
     # evaluate the histogram
-    hist, bins = np.histogram(expected_df['Mean'], bins=expected_df.shape[0], c='green')
+    hist, bins = np.histogram(expected_df['Mean'], bins=n_days, range=[0, n_days])
     offset = bins[1:] - bins[:-1]
-    plt.plot(bins[:-1] + offset, np.cumsum(hist), c='blue')
+    plt.plot(bins[:-1] + offset, np.cumsum(hist), c='blue', label='Cumulative Infections')
+    plt.plot(expected_df['Mean'], c='red', label='Daily Infections')
+    plt.legend(loc='upper left', frameon=False)
+    plt.grid()
 
     plt.title(title)
     plt.xlabel('Days')
