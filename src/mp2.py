@@ -276,7 +276,7 @@ def main():
     expected_df['Mean'] = expected_values[:n_days]
 
     # print(expected_df)
-    expected_df.to_csv(data_dir / f'Flu_Pandemic_{eps}_weekend_{weekend_check}.csv')
+    expected_df.to_csv(data_dir / f'Flu_Pandemic_{eps}_weekend_{weekend_check}.csv', index=False)
 
     title = f'Histogram of Days the Epidemic Lasted\n {eps:,} Episodes. Mean = {round(epidem_lens.mean(), 2)} days, Median = {median(epidem_lens)} days'
     plt.hist(epidem_lens)
