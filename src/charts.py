@@ -15,6 +15,8 @@ expected_df = pd.read_csv(data_dir / 'Flu_Pandemic_10000_weekend_True.csv')
 
 eps=10000
 weekend_check=True
+_mean = 26.6
+_median = 22.0
 
 # evaluate the histogram
 hist, bins = np.histogram(expected_df['Mean'], bins=len(expected_df['Mean']), range=[1, len(expected_df['Mean'])])
@@ -25,10 +27,10 @@ plt.legend(loc='upper left', frameon=False)
 plt.grid()
 
 
-title = f'Line Chart of Infections: {eps:,} Episodes.\nMean = 26.6 infections, Median = 22.0 infections'
+title = f'Line Chart of Infections: {eps:,} Episodes.\nMean = {_mean} infections, Median = {_median} infections'
 
 plt.title(title)
 plt.xlabel('Days')
 plt.ylabel('Mean Infections')
-# plt.savefig(fig_dir / f'Flu_Pandemic_means_{eps}_weekend_{weekend_check}.png')
+plt.savefig(fig_dir / f'Flu_Pandemic_means_{eps}_weekend_{weekend_check}.png')
 plt.show()
