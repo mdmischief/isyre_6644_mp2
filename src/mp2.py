@@ -48,7 +48,7 @@ parser.add_argument(
     help="Account for no school on Weekends",
     type=str2bool,
     dest='weekend_check',
-    default=True
+    default=False
 )
 parser.add_argument(
     "-eps",
@@ -297,9 +297,9 @@ def main():
     title = f'Line Chart of Infections: {eps:,} Episodes.\nMean = {round(expected_df["Mean"].mean(), 2)} infections, Median = {round(median(expected_df["Mean"]), 2)} infections'
 
     # evaluate the histogram
-    hist, bins = np.histogram(expected_df['Mean'], bins=n_days, range=[0, n_days])
+    hist, bins = np.histogram(expected_df['Mean'], bins=len(expected_df['Mean']), range=[1, len(expected_df['Mean'])])
     offset = bins[1:] - bins[:-1]
-    plt.plot(bins[:-1] + offset, np.cumsum(hist), c='blue', label='Cumulative Infections')
+    plt.plot(bins[:-1] + offset, np.cumsum(expected_df['Mean']), c='blue', label='Cumulative Infections')
     plt.plot(expected_df['Mean'], c='red', label='Daily Infections')
     plt.legend(loc='upper left', frameon=False)
     plt.grid()

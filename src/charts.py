@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pathlib
 from scipy.stats import norm
+from statistics import median
 
 data_dir = pathlib.Path.cwd() / 'data'
 data_dir.mkdir(parents=True, exist_ok=True)
@@ -11,12 +12,14 @@ data_dir.mkdir(parents=True, exist_ok=True)
 fig_dir = pathlib.Path.cwd() / 'figs'
 fig_dir.mkdir(parents=True, exist_ok=True)
 
-expected_df = pd.read_csv(data_dir / 'Flu_Pandemic_10000_weekend_True.csv')
-
 eps=10000
 weekend_check=True
-_mean = 26.6
-_median = 22.0
+
+expected_df = pd.read_csv(data_dir / f'Flu_Pandemic_{eps}_weekend_{weekend_check}.csv')
+
+_mean = round(expected_df["Mean"].mean(), 2)
+_median = round(median(expected_df["Mean"]), 2)
+_total = round(sum(expected_df["Mean"]), 0)
 
 # evaluate the histogram
 hist, bins = np.histogram(expected_df['Mean'], bins=len(expected_df['Mean']), range=[1, len(expected_df['Mean'])])
@@ -27,7 +30,7 @@ plt.legend(loc='upper left', frameon=False)
 plt.grid()
 
 
-title = f'Line Chart of Infections: {eps:,} Episodes.\nMean = {_mean} infections, Median = {_median} infections'
+title = f'Line Chart of Infections: {eps:,} Episodes.\nPer Day: Mean = {_mean},  Median = {_median}\nTotal = {_total} infections'
 
 plt.title(title)
 plt.xlabel('Days')
