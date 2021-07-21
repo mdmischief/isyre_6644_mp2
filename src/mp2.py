@@ -199,7 +199,7 @@ def episode(i, def_param=shared_array):
         # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7169241/
         # 50% of population, 60-80% effectivity
         mask_protection_factor = 0
-        if ceil(np.random.uniform()) >= 0.5:
+        if np.random.uniform(0, 1) >= 0.5:
             mask_protection_factor = np.random.uniform(0.6, 0.8)
 
         population.append(

@@ -32,8 +32,8 @@ plt.grid()
 
 title = f'Line Chart of Infections: {eps:,} Episodes.\nPer Day: Mean = {_mean},  Median = {_median}\nTotal = {_total} infections'
 
-plt.title(title)
+plt.title(title, fontsize=10)
 plt.xlabel('Days')
 plt.ylabel('Mean Infections')
 plt.savefig(fig_dir / f'Flu_Pandemic_means_{eps}_weekend_{weekend_check}.png')
-plt.show()
+# plt.show()
