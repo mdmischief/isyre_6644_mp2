@@ -163,14 +163,11 @@ def sim_day(population, infections, day=0):
 
     if weekend_check and day != 0 and (day + 1) % 6 == 0:
         # do nothing
-        # print(f'Day = {day}: 6 do nothing')
         pass
     elif weekend_check and day != 0 and (day + 1) % 7 == 0:
         # do nothing
-        # print(f'Day = {day}: 7 do nothing')
         pass
     else:
-        # print(f'Day = {day}: do the thing')
         for pt in population:
             for peer in population:
                 infections += pt.encounter(peer=peer, simulation_timehack=day)
@@ -228,16 +225,13 @@ def episode(i, def_param=shared_array):
     population[0].patient_zero(0)
 
     for simulation_timehack in range(0, n_days):
-        # print(f'{simulation_timehack=}')
         new_infections = sim_day(population, infections[-1], simulation_timehack)
         infections[simulation_timehack] = new_infections
 
-    # print(f'{infections=}')
     # Make sure your not modifying data when someone else is.
     lock.acquire()
 
     day_results[i, :] = infections
-    # print(f'{day_results[i]=}')
 
     # Always release the lock!
     lock.release()
@@ -251,11 +245,9 @@ def main():
 
     pool = mp.Pool(processes=mp.cpu_count(), initializer=init, initargs=(day_results_base,))
     pool.map(episode, range(eps))
-    # pool.close()
 
     day_results = np.ctypeslib.as_array(day_results_base.get_obj())
     day_results = day_results.reshape(eps, n_days)
-    # print(day_results)
 
     # Calculate and print stats
 
@@ -271,11 +263,9 @@ def main():
 
     # Expected value of infected by each day
     expected_values = day_results.mean(axis=0)
-    # n_days = 41
     expected_df = pd.DataFrame(list(range(1, n_days + 1)), columns=["Day"])
     expected_df['Mean'] = expected_values[:n_days]
 
-    # print(expected_df)
     expected_df.to_csv(data_dir / f'Flu_Pandemic_{eps}_weekend_{weekend_check}.csv', index=False)
 
     title = f'Histogram of Days the Epidemic Lasted\n {eps:,} Episodes. Mean = {round(epidem_lens.mean(), 2)} days, Median = {median(epidem_lens)} days'

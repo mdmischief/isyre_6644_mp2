@@ -1,13 +1,13 @@
-# ISyE 6644 Mini-Project 1: Pandemic Flu Spread
+# ISyE 6644 Mini-Project 2: Pandemic Flu Spread
 
 Robert King, Joseph Richardson, Daniel Rodgers
-June 24, 2021
+July 22, 2021
 
 ## Prerequesites
 
 Requires Python ">=3.7.1,<3.10"
 
-Execution requires the following PYthon packages be installed:
+Execution requires the following Python packages be installed:
 
 * argparse
 * ctypes
@@ -22,7 +22,7 @@ Execution requires the following PYthon packages be installed:
 * statistics
 * sys
 
-Optionally, you may use the included Poetry Environment Files:
+Optionally, you may use the included Poetry Environment Files to create the necessary virtual environment via `poetry install`:
 
 * poetry.lock
 * pyproject.toml
@@ -30,7 +30,7 @@ Optionally, you may use the included Poetry Environment Files:
 ## Contents
 
 * README.MD - This file.
-* mp1.py - Simulation script written in Python
+* mp2.py - Simulation script written in Python
 
     ```Python
   usage: mp2.py [-h] [-ns N_STUDENTS] [-w--weekend_check WEEKEND_CHECK] [-eps EPISODES] [-nd N_DAYS] [-p P] [-sdpf SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS [SOCIAL_DISTANCE_PROTECTION_FACTOR_GENERATORS ...]] [-incp INCUBATION_PERIOD_GENERATORS [INCUBATION_PERIOD_GENERATORS ...]] [-infp INFECTIOUS_PERIOD_GENERATORS [INFECTIOUS_PERIOD_GENERATORS ...]]
@@ -62,23 +62,21 @@ Optionally, you may use the included Poetry Environment Files:
 
     Example with default parameters:
 
+    **CAUTION: running with default parameters has required ~20 hours of processing time on an I7 3700X 8-core system**
+
     ```Python
-    python mp1.py
+    python mp2.py
     ```
 
     Example with modified parameters:
 
     ```Python
-    python mp1.py -ns 30 -p 0.10 -w False -ndi 5 -eps 100000
+    python mp2.py -ns 1500 -w True -eps 25
     ```
 
-* Figures Directory - Contains all figures for the default simulation parameters, with runs that do/do not have a weekend break, for 10^3..10^6 runs.
+* Figures Directory - Contains all figures for the default simulation parameters, with runs that do/do not have a weekend break, for 10^3..10^4 episodes.
   * Flu_Pandemic_Fig_1 - Histogram of Pandemic Length (Simulated)
-  * Flu_Pandemic_Fig_1_smallbins - Histogram of Pandemic Length with increased number of bins (Simulated)
-  * Flu_Pandemic_Fig_2 - Histogram of First Two Days of Pandemic (Theorectical)
-  * Flu_Pandemic_Fig_2 - Histogram of First Two Days of Pandemic (Empirical)
   * Flu_Pandemic_means - Line Chart of Cumulative number of Mean Infections
 
-* Tables Directory - csv files generated from the Python script that were used to create Table 1 and Table 2 in the report.
-  * day2_dist.csv - The theoretical distribution of kids infected by day 2 (Table 1)
-  * p_range.csv - Percent of episodes that ended in all kids infected for simulations at different infection rates, p. Based on Monte Carlo simulations of 1000 episodes each. (Table 2)
+* Data Directory - csv files generated from the Python script that were used to create Table 1 and Table 2 in the report.
+  * Flu_Pandemic - CSV file of the mean infections by day for 10^3..10^4 episodes.

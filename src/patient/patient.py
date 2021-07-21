@@ -9,9 +9,6 @@ class Patient:
         id: int,
         name: str = None,
         infectious_probability: float = 0.083,
-        # mask_protection_factor_generators=[0.0, 0.01],
-        # social_distance_protection_factor_generators=[0.0, 0.01],
-        # handwash_protection_factor_generators=[0.0, 0.01],
         mask_protection_factor=0,
         social_distance_protection_factor_generators=[0.0, 0.1],
         handwash_protection_factor=0,
@@ -43,14 +40,11 @@ class Patient:
         self.vaccination_protection_factor_generators = vaccination_protection_factor_generators
 
         # Track protection factors: [mask, social_distance, handwashing]
-        # _ml, _mu = mask_protection_factor_generators
         _sl, _su = social_distance_protection_factor_generators
-        # _hl, _hu = handwash_protection_factor_generators
         self.protection_factors = mask_protection_factor * np.random.uniform(_sl, _su) * handwash_protection_factor
 
         # Generate a duration for incubation - defaults give a 2..5 day period
         _lower, _upper = self.incubation_period_generators
-        # self.incubation_period = ceil(np.random.uniform(_lower, _upper)*c)
         self.incubation_period = floor(np.random.uniform(_lower, _upper))
 
         # Generate a duration for being infectious - defaults give a 2..5 day period
@@ -74,9 +68,6 @@ class Patient:
 
         # Track vaccination timehack
         self.vaccinated_on = np.zeros(0)
-
-    # def __str__(self):
-    #     return f'Patient ID {self.id} named {self.name} has infectious probability {self.infectious_probability}'
 
     def __repr__(self):
         return f'Patient(id={self.id}, name={self.name}, infectious_probability={self.infectious_probability}, mask_protection_factor={self.mask_protection_factor}, social_distance_protection_factor_generators={self.social_distance_protection_factor_generators}, handwash_protection_factor={self.handwash_protection_factor}, incubation_period_generators={self.incubation_period_generators}, infectious_period_generators={self.infectious_period_generators}, vaccination_protection_factor_generators={self.vaccination_protection_factor_generators})'
@@ -138,7 +129,6 @@ class Patient:
         # Generate the probability of infection based on the Peer/Subject attributes
         rand = np.random.uniform(0, 1)
         infection_probability = self.infectious_probability * self.protection_factors * self.get_vaccination_protection_factor()
-        # print(f'{self.id=} {self.infectious_probability=} {self.protection_factors=} {self.get_vaccination_protection_factor()=} {rand=}')
 
         if rand <= infection_probability:
             self.infected_by = peer.id
@@ -146,7 +136,6 @@ class Patient:
             self.infectious_start = self.infected_on + self.incubation_period
             self.infectious_end = self.infectious_start + self.infectious_period
 
-            # print(self)
             return 1
 
         return 0
