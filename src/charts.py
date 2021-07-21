@@ -13,7 +13,7 @@ fig_dir = pathlib.Path.cwd() / 'figs'
 fig_dir.mkdir(parents=True, exist_ok=True)
 
 eps=10000
-weekend_check=True
+weekend_check=False
 
 expected_df = pd.read_csv(data_dir / f'Flu_Pandemic_{eps}_weekend_{weekend_check}.csv')
 
